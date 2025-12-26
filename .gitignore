@@ -5,6 +5,7 @@
 
 # Custom ignores
 node_modules
+*.sqlite
 
 # dotenv files
 .env
