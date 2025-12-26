@@ -22,7 +22,16 @@ builder.Services.AddAuthorization();
 // Activate identity APIs. By default, both cookies and proprietary tokens
 // are activated. Cookies will be issued based on the 'useCookies' querystring
 // parameter in the login endpoint
-builder.Services.AddIdentityApiEndpoints<CustomUser>()
+builder.Services.AddIdentityApiEndpoints<CustomUser>(options =>
+{
+    // Configure password requirements (relaxed for development)
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+})
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 var app = builder.Build();
@@ -51,6 +60,21 @@ using (var scope = app.Services.CreateScope())
 
     var context = services.GetRequiredService<ApplicationDbContext>();
     context.Database.Migrate();
+
+
+
+    if (!app.Environment.IsEnvironment("Test"))
+    {
+
+        SeedData.InitializeDatabase(services);
+        SeedData.CreateDefaultAdminAndRoles(services).Wait();
+        SeedData.AttendanceConfiguration(services).Wait();
+
+        if (!app.Environment.IsProduction())
+        {
+            SeedData.EnsureSeedEmployeesAndLogs(services).Wait();
+        }
+    }
 }
 
 app.Run();

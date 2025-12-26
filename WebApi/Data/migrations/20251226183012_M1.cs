@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Marigergis.Attendance.WebApi.Data.migrations
+namespace Marigergis.Attendance.WebApi.Data.Migrations
 {
     /// <inheritdoc />
     public partial class M1 : Migration

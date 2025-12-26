@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marigergis.Attendance.WebApi.Data;
 
-public class ApplicationDbContext : IdentityDbContext<CustomUser>
+public class ApplicationDbContext : IdentityDbContext<CustomUser, IdentityRole, string>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     { }

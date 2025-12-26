@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Marigergis.Attendance.WebApi.Data.migrations
+namespace Marigergis.Attendance.WebApi.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251225211240_M1")]
+    [Migration("20251226183012_M1")]
     partial class M1
     {
         /// <inheritdoc />
@@ -38,6 +38,70 @@ namespace Marigergis.Attendance.WebApi.Data.migrations
                     b.HasKey("Id");
 
                     b.ToTable("Config");
+                });
+
+            modelBuilder.Entity("Marigergis.Attendance.WebApi.Models.Entities.CustomUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Marigergis.Attendance.WebApi.Models.Entities.Employee", b =>
@@ -107,70 +171,6 @@ namespace Marigergis.Attendance.WebApi.Data.migrations
                     b.HasIndex("EmployeeId");
 
                     b.ToTable("Logs");
-                });
-
-            modelBuilder.Entity("Marigergis.Attendance.WebApi.Models.Entities.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
-
-                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -303,7 +303,7 @@ namespace Marigergis.Attendance.WebApi.Data.migrations
 
             modelBuilder.Entity("Marigergis.Attendance.WebApi.Models.Entities.Employee", b =>
                 {
-                    b.HasOne("Marigergis.Attendance.WebApi.Models.Entities.User", "Identity")
+                    b.HasOne("Marigergis.Attendance.WebApi.Models.Entities.CustomUser", "Identity")
                         .WithOne("Employee")
                         .HasForeignKey("Marigergis.Attendance.WebApi.Models.Entities.Employee", "IdentityId");
 
@@ -332,7 +332,7 @@ namespace Marigergis.Attendance.WebApi.Data.migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Marigergis.Attendance.WebApi.Models.Entities.User", null)
+                    b.HasOne("Marigergis.Attendance.WebApi.Models.Entities.CustomUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -341,7 +341,7 @@ namespace Marigergis.Attendance.WebApi.Data.migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Marigergis.Attendance.WebApi.Models.Entities.User", null)
+                    b.HasOne("Marigergis.Attendance.WebApi.Models.Entities.CustomUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -356,7 +356,7 @@ namespace Marigergis.Attendance.WebApi.Data.migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Marigergis.Attendance.WebApi.Models.Entities.User", null)
+                    b.HasOne("Marigergis.Attendance.WebApi.Models.Entities.CustomUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -365,21 +365,21 @@ namespace Marigergis.Attendance.WebApi.Data.migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Marigergis.Attendance.WebApi.Models.Entities.User", null)
+                    b.HasOne("Marigergis.Attendance.WebApi.Models.Entities.CustomUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Marigergis.Attendance.WebApi.Models.Entities.CustomUser", b =>
+                {
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("Marigergis.Attendance.WebApi.Models.Entities.Employee", b =>
                 {
                     b.Navigation("Logs");
-                });
-
-            modelBuilder.Entity("Marigergis.Attendance.WebApi.Models.Entities.User", b =>
-                {
-                    b.Navigation("Employee");
                 });
 #pragma warning restore 612, 618
         }
