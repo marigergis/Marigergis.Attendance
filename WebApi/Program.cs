@@ -1,7 +1,9 @@
 using Marigergis.Attendance.WebApi.Data;
 using Marigergis.Attendance.WebApi.Models.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,12 @@ builder.Services.AddOpenApi();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
+
+// MediatR for CQRS handlers
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+
+// AutoMapper profiles
+builder.Services.AddAutoMapper(cfg => { }, typeof(Program).Assembly);
 
 // Authorization
 builder.Services.AddAuthorization();
