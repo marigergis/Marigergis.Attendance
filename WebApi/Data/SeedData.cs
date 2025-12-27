@@ -59,7 +59,7 @@ public static class SeedData
         if (isDefaultAdminExists == null)
         {
             // Get the username/password from configuration file
-            var defaultAdmin = new CustomUser { UserName = DefaultAdmin.UserName };
+            var defaultAdmin = new CustomUser { UserName = DefaultAdmin.UserName, Email = DefaultAdmin.Email};
             var createResult = await userManager.CreateAsync(defaultAdmin, DefaultAdmin.Password);
 
             if (!createResult.Succeeded)
@@ -172,7 +172,7 @@ public static class SeedData
                             Logs = fakeLogList.ToList()
                         };
                         var roles = new Roles();
-                        var user = new CustomUser { UserName = employee.UserName, Employee = employeeInfo };
+                        var user = new CustomUser { UserName = employee.UserName, Email = $"{employee.UserName}@domain.com", Employee = employeeInfo };
                         await userManager.CreateAsync(user, DEFAULT_PASSWORD);
                         await userManager.AddToRoleAsync(user, roles.Employee);
                     }

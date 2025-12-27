@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marigergis.Attendance.WebApi.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251226183012_M1")]
+    [Migration("20251226212046_M1")]
     partial class M1
     {
         /// <inheritdoc />

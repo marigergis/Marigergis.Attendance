@@ -1,6 +1,7 @@
 using Marigergis.Attendance.WebApi.Data;
 using Marigergis.Attendance.WebApi.Models.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
@@ -60,7 +61,78 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapIdentityApi<CustomUser>();
+// Custom login endpoint that accepts username instead of email
+app.MapPost("/login", async (
+    string? useCookies,
+    string? useSessionCookies,
+    LoginRequest loginRequest,
+    SignInManager<CustomUser> signInManager,
+    UserManager<CustomUser> userManager) =>
+{
+    useCookies ??= "false";
+    useSessionCookies ??= "false";
+
+    if (!bool.TryParse(useCookies, out var useCookieScheme) || !bool.TryParse(useSessionCookies, out var useSessionScheme))
+    {
+        return Results.BadRequest();
+    }
+
+    if (useSessionScheme && useCookieScheme)
+    {
+        return Results.BadRequest("useCookies and useSessionCookies are mutually exclusive");
+    }
+
+    // Find user by username instead of email
+    var user = await userManager.FindByNameAsync(loginRequest.Username);
+    if (user == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var result = await signInManager.CheckPasswordSignInAsync(user, loginRequest.Password, lockoutOnFailure: true);
+    if (!result.Succeeded)
+    {
+        return Results.Unauthorized();
+    }
+
+    if (useSessionScheme)
+    {
+        await signInManager.SignInAsync(user, new AuthenticationProperties { IsPersistent = false }, "Identity.Application");
+    }
+    else if (useCookieScheme)
+    {
+        await signInManager.SignInAsync(user, new AuthenticationProperties { IsPersistent = true }, "Identity.Application");
+    }
+    else
+    {
+        return Results.Unauthorized();
+    }
+
+    return Results.Ok();
+})
+.WithName("Login")
+.WithOpenApi()
+.AllowAnonymous();
+
+// Map other identity endpoints (register, refresh, logout, etc.)
+app.MapPost("/register", async (
+    RegisterRequest registration,
+    UserManager<CustomUser> userManager) =>
+{
+    var user = new CustomUser { UserName = registration.Email, Email = registration.Email };
+
+    var result = await userManager.CreateAsync(user, registration.Password);
+
+    if (!result.Succeeded)
+    {
+        return Results.BadRequest(result.Errors);
+    }
+
+    return Results.StatusCode(StatusCodes.Status201Created);
+})
+.WithName("Register")
+.WithOpenApi()
+.AllowAnonymous();
 
 using (var scope = app.Services.CreateScope())
 {
